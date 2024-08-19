@@ -11,17 +11,26 @@
     <h2>Help & Support</h2>
     <p>If you need assistance, please follow these guidelines:</p>
     <ul>
-      <li><strong>Step 1:</strong> Check our <a href="/faq">FAQ page</a> for common questions.</li>
-      <li><strong>Step 2:</strong> Visit our <a href="/contact">Contact Us</a> page to get in touch with support.</li>
-      <li><strong>Step 3:</strong> Refer to the <a href="/user-guide">User Guide</a> for detailed instructions.</li>
+      <li>
+        <strong>Step 1:</strong> Check our <a href="/faq">FAQ page</a> for
+        common questions.
+      </li>
+      <li>
+        <strong>Step 2:</strong> Visit our
+        <a href="/contact">Contact Us</a> page to get in touch with support.
+      </li>
+      <li>
+        <strong>Step 3:</strong> Refer to the
+        <a href="/user-guide">User Guide</a> for detailed instructions.
+      </li>
     </ul>
     <p>For any urgent issues, please reach out to our support team directly.</p>
-  </div>    
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'HelpSection',
+  name: "HelpSection",
   data() {
     return {
       // Add any data properties here if needed
@@ -29,12 +38,12 @@ export default {
   },
   methods: {
     // Define any methods here if needed
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
-    .home {
+.home {
   position: absolute; /* Changed to absolute positioning */
   top: 0;
   left: 0;
@@ -52,9 +61,9 @@ export default {
 }
 
 .help-container {
-    position: relative;
-    align-items: center;
-    top: 150px;
+  position: relative;
+  align-items: center;
+  top: 150px;
   padding: 20px;
   background-color: #f9f9f9;
   border: 1px solid #ddd;
