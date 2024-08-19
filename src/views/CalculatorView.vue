@@ -1,158 +1,171 @@
 <template>
-  <div class="home">
-    <img
-      alt="background"
-      :class="{ fadeIn: isImageLoaded }"
-      src="../assets/AdobeStock_519445978-scaled.jpeg.webp"
-      @load="startAnimation"
-    />
-  </div>
-  <div id="app">
-    <div class="container">
-      <h1>Energy Calculator</h1>
-      <div class="form-group">
-        <label for="day">Select Day:</label>
-        <input type="number" id="day" v-model.number="day" />
-      </div>
-      <div class="form-group">
-        <label for="capacity">Energy Generated (kWh):</label>
-        <input
-          type="number"
-          id="capacity"
-          v-model.number="capacity"
-          step="0.01"
-          placeholder="Enter energy generated"
-          readonly
-        />
-      </div>
-      <div class="form-group">
-        <label for="energyUsed">Energy Used (kWh):</label>
-        <input
-          type="number"
-          id="energyUsed"
-          v-model.number="energyUsed"
-          step="0.01"
-          placeholder="Enter energy used"
-          readonly
-        />
-      </div>
-      <div class="button-group">
-        <button @click="fetchData">Fetch Data</button>
-      </div>
-      <div class="result">{{ resultMessage }}</div>
-      <canvas id="energyChart" width="400" height="200"></canvas>
+    <div class="home">
+      <img
+        alt="background"
+        :class="{ fadeIn: isImageLoaded }"
+        src="../assets/AdobeStock_519445978-scaled.jpeg.webp"
+        @load="startAnimation"
+      />
     </div>
-
-    <div id="register">
-      <div id="ticket">
-        <h1>Your Receipt</h1>
-        <table>
-          <tbody id="entries">
-            <tr>
-              <td>Units Sent Back</td>
-              <td>{{ savedUnits.toFixed(2) }} kWh</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <th>Amount Paid Back:</th>
-              <th id="total">
-                R {{ totalMoneyEarned.toFixed(2).replace(".", ",") }}
-              </th>
-            </tr>
-          </tfoot>
-        </table>
+    <div id="app">
+      <div class="container">
+        <h1>Energy Calculator</h1>
+        <div class="form-group">
+          <label for="day">Select Day:</label>
+          <input type="number" id="day" v-model.number="day" />
+        </div>
+        <div class="form-group">
+          <label for="rate">Price Rate (R per kWh):</label>
+          <input
+            type="number"
+            id="rate"
+            v-model.number="rate"
+            step="0.01"
+            placeholder="Enter price rate"
+          />
+        </div>
+        <div class="form-group">
+          <label for="capacity">Energy Generated (kWh):</label>
+          <input
+            type="number"
+            id="capacity"
+            v-model.number="capacity"
+            step="0.01"
+            placeholder="Enter energy generated"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          <label for="energyUsed">Energy Used (kWh):</label>
+          <input
+            type="number"
+            id="energyUsed"
+            v-model.number="energyUsed"
+            step="0.01"
+            placeholder="Enter energy used"
+            readonly
+          />
+        </div>
+        <div class="button-group">
+          <button @click="fetchData">Fetch Data</button>
+        </div>
+        <div class="result">{{ resultMessage }}</div>
+        <canvas id="energyChart" width="400" height="200"></canvas>
+      </div>
+  
+      <div id="register">
+        <div id="ticket">
+          <h1>Your Receipt</h1>
+          <table>
+            <tbody id="entries">
+              <tr>
+                <td>Units Sent Back</td>
+                <td>{{ savedUnits.toFixed(2) }} kWh</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>Amount Paid Back:</th>
+                <th id="total">
+                  R {{ totalMoneyEarned.toFixed(2).replace(".", ",") }}
+                </th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
-</template>
-
-<script>
-import { mapActions, mapState } from "vuex";
-import Chart from "chart.js/auto";
-
-export default {
-  data() {
-    return {
-      day: null,
-      resultMessage: "",
-    };
-  },
-  computed: {
-    ...mapState(["capacity", "energyUsed", "totalMoneyEarned"]),
-    savedUnits() {
-      return this.capacity - this.energyUsed;
+  </template>
+  
+  <script>
+  import { mapActions, mapState } from "vuex";
+  import Chart from "chart.js/auto";
+  
+  export default {
+    data() {
+      return {
+        day: null,
+        rate: 1, // Initialize with a default value
+        resultMessage: "",
+      };
     },
-    resultMessage() {
-      if (this.capacity !== null && this.energyUsed !== null) {
-        return `Energy Generated - ${this.capacity} kWh, Energy Used - ${this.energyUsed} kWh`;
-      }
-      return "";
+    computed: {
+      ...mapState(["capacity", "energyUsed", "totalMoneyEarned"]),
+      savedUnits() {
+        return this.capacity - this.energyUsed;
+      },
+      resultMessage() {
+        if (this.capacity !== null && this.energyUsed !== null) {
+          return `Energy Generated - ${this.capacity} kWh, Energy Used - ${this.energyUsed} kWh`;
+        }
+        return "";
+      },
     },
-  },
-  methods: {
-    ...mapActions(["fetchData", "calculateReturn"]),
-    async fetchData() {
-      if (!this.day) {
-        this.resultMessage = "Please select a day.";
-        return;
-      }
-
-      try {
-        await this.$store.dispatch("fetchData", this.day);
-        this.resultMessage = `Data fetched: Energy Generated: ${this.capacity} kWh, Energy Used: ${this.energyUsed} kWh`;
-        this.calculateReturn();
-        this.updateChart();
-      } catch (error) {
-        this.resultMessage = `Error fetching data: ${error.message}`;
-      }
-    },
-    calculateReturn() {
-      this.$store.dispatch("calculateReturn");
-    },
-    updateChart() {
-      const ctx = document.getElementById("energyChart").getContext("2d");
-      if (this.chart) {
-        this.chart.destroy();
-      }
-      this.chart = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: ["Energy Generated", "Energy Used", "Excess Energy"],
-          datasets: [
-            {
-              label: "Energy (kWh)",
-              data: [this.capacity, this.energyUsed, this.savedUnits],
-              backgroundColor: ["#ff9a00", "#ffcc00", "#66cc66"],
-              borderColor: ["#e87c00", "#ffd700", "#44aa44"],
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          scales: {
-            x: {
-              beginAtZero: true,
-            },
-            y: {
-              beginAtZero: true,
+    methods: {
+      ...mapActions(["fetchData", "calculateReturn"]),
+      async fetchData() {
+        if (!this.day) {
+          this.resultMessage = "Please select a day.";
+          return;
+        }
+  
+        try {
+          await this.$store.dispatch("fetchData", this.day);
+          // Update the rate in the Vuex store
+          this.$store.commit("SET_RATE", this.rate);
+          this.resultMessage = `Data fetched: Energy Generated: ${this.capacity} kWh, Energy Used: ${this.energyUsed} kWh`;
+          this.calculateReturn();
+          this.updateChart();
+        } catch (error) {
+          this.resultMessage = `Error fetching data: ${error.message}`;
+        }
+      },
+      calculateReturn() {
+        this.$store.dispatch("calculateReturn");
+      },
+      updateChart() {
+        const ctx = document.getElementById("energyChart").getContext("2d");
+        if (this.chart) {
+          this.chart.destroy();
+        }
+        this.chart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: ["Energy Generated", "Energy Used", "Excess Energy"],
+            datasets: [
+              {
+                label: "Energy (kWh)",
+                data: [this.capacity, this.energyUsed, this.savedUnits],
+                backgroundColor: ["#ff9a00", "#ffcc00", "#66cc66"],
+                borderColor: ["#e87c00", "#ffd700", "#44aa44"],
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            scales: {
+              x: {
+                beginAtZero: true,
+              },
+              y: {
+                beginAtZero: true,
+              },
             },
           },
-        },
-      });
+        });
+      },
     },
-  },
-  watch: {
-    capacity() {
-      this.updateChart();
+    watch: {
+      capacity() {
+        this.updateChart();
+      },
+      energyUsed() {
+        this.updateChart();
+      },
     },
-    energyUsed() {
-      this.updateChart();
-    },
-  },
-};
-</script>
+  };
+  </script>
 
 <style scoped>
 .home {
@@ -202,7 +215,7 @@ body {
   max-width: 500px;
   width: 100%;
   margin: 20px;
-  height: 70vh;
+  height: auto;
   border: 1px solid black;
   z-index: 2;
 }
