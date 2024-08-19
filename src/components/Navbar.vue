@@ -50,7 +50,7 @@
               <a class="nav-link" href="#">Reports</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Help</a>
+              <a class="nav-link" href="/help">Help</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Login</a>
