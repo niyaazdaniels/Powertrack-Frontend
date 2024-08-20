@@ -8,16 +8,15 @@ const routes = [
     component: HomeView
   },
   {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: () => import('../views/HomeView.vue')
+    path: '/calculator',
+    name: 'calculator',
+    component: () => import('../views/CalculatorView.vue')
   },
   {
-    path: '/reports',
-    name: 'reports',
-    component: () => import('../views/ReportsView.vue')
+    path: '/help',
+    name: 'help',
+    component: () => import('../views/HelpView.vue')
   },
-  
 ]
 
 const router = createRouter({

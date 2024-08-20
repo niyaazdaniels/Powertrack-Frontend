@@ -3,14 +3,15 @@
     class="navbar navbar-dark navbar-expand-lg bg-black fixed-top position-relative"
   >
     <div class="container-fluid">
-      <a class="navbar-brand" href="#"
-        ><img
+      <a class="navbar-brand" href="#">
+        <img
           src="../assets/logo-e1694516836643.png"
           alt="logo"
           class="img px-2"
           height="30px"
-        />LC Studio</a
-      >
+        />
+        LC Studio
+      </a>
       <button
         class="navbar-toggler"
         type="button"
@@ -40,15 +41,14 @@
             <li class="nav-item">
               <router-link class="nav-link" to="/" exact>Home</router-link>
             </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/dashboard"
-                >Energy Data</router-link
-              >
+            <li v-if="isHome" class="nav-item">
+              <a class="nav-link" href="#dashboard">Energy Data</a>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/calculator"
-                >Calculator</router-link
-              >
+              <router-link class="nav-link" to="/calculator">Calculator</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/help">Help</router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/login">Login</router-link>
@@ -64,7 +64,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+  computed: {
+    isHome() {
+      return this.$route.path === '/';
+    }
+  }
+};
 </script>
 
 <style scoped>

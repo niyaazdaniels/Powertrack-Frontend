@@ -1,75 +1,61 @@
+import { createStore } from 'vuex';
 import axios from 'axios';
 
-
-const state = {
-  monthlyProduction: 0,
-  monthlyConsumption: 0,
-  unit: 0,
-  sell: 0,
-  dailyLabels: [],
-  dailyProductionData: [],
-  dailyConsumptionData: [],
-};
-
-const getters = {
-  monthlyProduction: (state) => state.monthlyProduction,
-  monthlyConsumption: (state) => state.monthlyConsumption,
-  unit: (state) => state.unit,
-  sell: (state) => state.sell,
-  dailyLabels: (state) => state.dailyLabels,
-  dailyProductionData: (state) => state.dailyProductionData,
-  dailyConsumptionData: (state) => state.dailyConsumptionData,
-};
-
-const mutations = {
-  setMonthly(state, { monthlyProduction, monthlyConsumption }) {
-    state.monthlyProduction = monthlyProduction;
-    state.monthlyConsumption = monthlyConsumption;
+export default createStore({
+  state: {
+    capacity: 0,
+    energyUsed: 0,
+    totalMoneyEarned: 0,
+    rate: 1 // Initialize with a default value
   },
-  setUnits(state, { unit, sell }) {
-    state.unit = unit;
-    state.sell = sell;
-  },
-  setDaily(state, { dailyLabels, dailyProductionData, dailyConsumptionData }) {
-    state.dailyLabels = dailyLabels;
-    state.dailyProductionData = dailyProductionData;
-    state.dailyConsumptionData = dailyConsumptionData;
-  },
-};
-
-const actions = {
-  async fetchInverterData({ commit }) {
-    try {
-      const response = await axios.get('https://backend-powertrack.onrender.com/inverter');
-      const data = response.data[0];
-
-      const monthlyProduction = parseFloat(data.monthly_production.replace(' kWh', ''));
-      const monthlyConsumption = parseFloat(data.monthly_consumption.replace(' mWh', '')) * 1000;
-
-      const unit = parseFloat(data.unit.replace('R', '').trim());
-      const sell = parseFloat(data.sell.replace('R', '').trim());
-
-      commit('setMonthly', { monthlyProduction, monthlyConsumption });
-      commit('setUnits', { unit, sell });
-
-      const dailyResponse = await axios.get('https://backend-powertrack.onrender.com/daily');
-      const dailyData = dailyResponse.data;
-
-      const dailyLabels = dailyData.map(item => item.day);
-      const dailyProductionData = dailyData.map(item => parseFloat(item.production.replace(' kWh', '')));
-      const dailyConsumptionData = dailyData.map(item => parseFloat(item.consumption.replace(' kWh', '')));
-
-      commit('setDaily', { dailyLabels, dailyProductionData, dailyConsumptionData });
-    } catch (error) {
-      console.error('Error fetching inverter data:', error);
+  mutations: {
+    SET_CAPACITY(state, capacity) {
+      state.capacity = capacity;
+    },
+    SET_ENERGY_USED(state, energyUsed) {
+      state.energyUsed = energyUsed;
+    },
+    SET_TOTAL_MONEY_EARNED(state, totalMoneyEarned) {
+      state.totalMoneyEarned = totalMoneyEarned;
+    },
+    SET_RATE(state, rate) {
+      state.rate = rate;
     }
   },
-};
+  actions: {
+    async fetchData({ commit }, Day) {
+      try {
+        // Fetch data from the API
+        const response = await axios.get('https://backend-powertrack.onrender.com/daily');
+        const data = response.data;
 
-export default {
-  namespaced: true,
-  state,
-  getters,
-  mutations,
-  actions,
-};
+        console.log('Fetched data:', data);
+
+        const dayData = data.find(entry => entry.day === `Day ${Day}`);
+
+        if (!dayData) {
+          throw new Error('Data for the selected day not found.');
+        }
+
+        const capacity = parseFloat(dayData.production.replace(' kWh', '').replace(',', '.'));
+        const energyUsed = parseFloat(dayData.consumption.replace(' kWh', '').replace(',', '.'));
+
+        // Check if parsed values are valid numbers
+        if (isNaN(capacity) || isNaN(energyUsed)) {
+          throw new Error('Invalid data format for capacity or energy used.');
+        }
+
+        commit('SET_CAPACITY', capacity);
+        commit('SET_ENERGY_USED', energyUsed);
+
+      } catch (error) {
+        console.error(`Error fetching data: ${error.message}`);
+      }
+    },
+    calculateReturn({ commit, state }) {
+      const savedUnits = state.capacity - state.energyUsed;
+      const totalMoneyEarned = savedUnits * state.rate;
+      commit('SET_TOTAL_MONEY_EARNED', totalMoneyEarned);
+    }
+  }
+});
