@@ -15,16 +15,6 @@
         <input type="number" id="day" v-model.number="day" />
       </div>
       <div class="form-group">
-        <label for="rate">Price Rate (R per kWh):</label>
-        <input
-          type="number"
-          id="rate"
-          v-model.number="rate"
-          step="0.01"
-          placeholder="Enter price rate"
-        />
-      </div>
-      <div class="form-group">
         <label for="capacity">Energy Generated (kWh):</label>
         <input
           type="number"
@@ -44,6 +34,16 @@
           step="0.01"
           placeholder="Enter energy used"
           readonly
+        />
+      </div>
+      <div class="form-group">
+        <label for="rate">Price Rate (R per kWh):</label>
+        <input
+          type="number"
+          id="rate"
+          v-model.number="rate"
+          step="0.01"
+          placeholder="Enter price rate"
         />
       </div>
       <div class="button-group">
