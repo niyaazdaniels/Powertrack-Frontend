@@ -16,13 +16,13 @@
   </div>
   <section class="powertrack-about">
     <div
-      class="heading-container pt-5 pb-5 d-inline-flex text-uppercase d-flex flex-wrap justify-content-center"
+      class="heading-container pt-5 pb-3 d-inline-flex text-uppercase d-flex flex-wrap justify-content-center"
     >
       <h1 class="text display-5 fw-bold">Power</h1>
       <h1 class="text-success display-5 fw-bold">Track</h1>
     </div>
-    <div class="about-container container-fluid p-5">
-      <p class="p fs-3">
+    <div class="about-container container p-5">
+      <p class="p fs-5">
         Introducing Power Track – an elegant, user-centric application that
         seamlessly connects to your solar and battery inverters. Gain real-time
         insights into your energy production, consumption, and excess energy
@@ -31,7 +31,7 @@
       </p>
     </div>
     <div
-      class="energy-dashboard-section container col-12 p-2  bg-dark bg-gradient rounded shadow-lg"
+      class="energy-dashboard-section container col-md-12 p-2 bg-dark bg-gradient rounded shadow"
       id="dashboard"
     >
       <div
@@ -51,26 +51,26 @@
 
       <div class="chart-container d-flex flex-wrap justify-content-between">
         <!-- First Chart -->
-        <div class="chart-card col-md-4 mb-4">
-          <div class="card h-100 border-0 shadow-lg">
-            <div class="card-body p-3 bg-dark text-white rounded-lg">
+        <div class="chart-card col-md-12 mb-4">
+          <div class="card h-100 border-0 shadow">
+            <div class="card-body p-3 bg-dark text-white rounded">
               <h5 class="h5 text-light text-start text-uppercase">
                 Production
               </h5>
               <div class="card-text">
-                <canvas id="myChart" height="350"></canvas>
+                <canvas id="myChart" height="325"></canvas>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Second Chart -->
-        <div class="chart-card col-md-4 mb-4">
-          <div class="card h-100 border-0 shadow-lg">
-            <div class="card-body p-3 bg-dark text-white rounded-lg">
+        <div class="chart-card col-md-12 mb-4">
+          <div class="card h-100 border-0 shadow">
+            <div class="card-body p-3 bg-dark text-white rounded">
               <h5 class="h5 text-light text-start text-uppercase">Cost</h5>
               <div class="card-text">
-                <canvas id="mySecondChart" height="350"></canvas>
+                <canvas id="mySecondChart" height="325"></canvas>
               </div>
             </div>
           </div>
@@ -78,14 +78,14 @@
 
         <!-- Third Chart -->
         <div class="chart-card col-md-4 mb-4">
-          <div class="card h-100 border-0 shadow-lg">
-            <div class="card-body p-3 bg-dark text-white rounded-lg">
+          <div class="card h-100 border-0 shadow">
+            <div class="card-body p-3 bg-dark text-white rounded">
               <h5 class="h5 text-light text-uppercase text-start">
                 Usage Estimate
               </h5>
 
               <div class="card-text">
-                <canvas id="myThirdChart" height="350"></canvas>
+                <canvas id="myThirdChart" height="325"></canvas>
               </div>
             </div>
           </div>
@@ -94,12 +94,12 @@
     </div>
   </section>
 
-  <section id="our-partners pb-5 pt-5">
+  <section id="our-partners pb-5 pt-5 mt-3 mb-3">
     <div
       class="our-partners-heading-container d-flex justify-content-center text-uppercase flex-wrap"
     >
-      <h1 class="our-partners-heading-our px-1 fw-semibold">Our</h1>
-      <h1 class="our-partners-heading-partner px-3 fw-semibold">Partners</h1>
+      <h1 class="our-partners-heading-our px-1 fw-bold">Our</h1>
+      <h1 class="our-partners-heading-partner px-3 fw-bold">Partners</h1>
     </div>
     <div class="our-partners-sub-heading">
       <p class="our-partners-sub-heading-text">
@@ -611,6 +611,10 @@ export default {
 .our-partners-companies {
   margin: 2rem;
   position: relative;
+}
+
+.our-partners-heading-partner {
+  color: rgb(88, 190, 190);
 }
 
 .carousel-container {
