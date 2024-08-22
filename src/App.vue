@@ -19,6 +19,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 body {

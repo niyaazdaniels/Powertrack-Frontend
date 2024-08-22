@@ -1,15 +1,15 @@
 <template>
-  <div class="home">
-    <img
-      alt="background"
-      :class="{ fadeIn: isImageLoaded }"
-      src="../assets/AdobeStock_519445978-scaled.jpeg.webp"
-      @load="startAnimation"
-    />
-    <div id="app">
-      <div class="container">
-        <h1>Energy Calculator</h1>
-        <div class="form-group-container d-sm-flex">
+  <div class="app">
+    <div class="home">
+      <img
+        alt="background"
+        :class="{ fadeIn: isImageLoaded }"
+        src="../assets/calculator-background-transformed.jpeg"
+        @load="startAnimation"
+      />
+      <div class="energy-calculator container">
+        <h2>Energy Calculator</h2>
+        <form @submit.prevent="fetchData">
           <div class="form-group">
             <label for="day">Select Day:</label>
             <input
@@ -38,7 +38,7 @@
               id="capacity"
               v-model.number="capacity"
               step="0.01"
-              placeholder="Enter energy generated"
+              placeholder="Energy generated"
               readonly
             />
           </div>
@@ -49,61 +49,81 @@
               id="energyUsed"
               v-model.number="energyUsed"
               step="0.01"
-              placeholder="Enter energy used"
+              placeholder="Energy used"
               readonly
             />
           </div>
-        </div>
-
-        <div class="button-group">
-          <button @click="fetchData">Fetch Data</button>
-        </div>
+          <div class="button-group">
+            <button type="submit">Fetch Data</button>
+          </div>
+          <div class="pdf-button-group">
+            <button
+              @click="exportToPDF"
+              v-if="
+                isDataFetched &&
+                capacity !== null &&
+                energyUsed !== null &&
+                savedUnits !== null &&
+                totalMoneyEarned !== null
+              "
+              class="btn btn-export"
+            >
+              Export as PDF
+            </button>
+          </div>
+        </form>
 
         <!-- Result -->
-        <canvas v-if="isDataFetched" id="energyChart" width="200" height="200"></canvas>
-        
+        <canvas
+          v-if="isDataFetched"
+          id="energyChart"
+          width="200"
+          height="200"
+        ></canvas>
+
         <!-- Register -->
-      </div>
-      <div
-      id="register"
-        class="d-flex flex-column flex-wrap"
-        v-if="isDataFetched && (savedUnits !== null || totalMoneyEarned !== null)"
-      >
-      <h1>Your Receipt</h1>
-      <table>
-        <tbody id="entries">
-            <tr>
-              <td>Units Sent Back</td>
-              <td>{{ savedUnits.toFixed(2) }} kWh</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <th>Amount Paid Back:</th>
-              <th id="total">
-                R {{ totalMoneyEarned.toFixed(2).replace(".", ",") }}
-              </th>
-            </tr>
-          </tfoot>
-        </table>
-        <div v-if="isDataFetched" class="result">{{ resultMessage }}</div>
+        <div
+          id="register"
+          class="register"
+          v-if="isDataFetched"
+        >
+          <h2>Your Receipt</h2>
+          <table>
+            <tbody id="entries">
+              <tr>
+                <td>Units </td>
+                <td>{{ savedUnits.toFixed(2) }} kWh</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>Amount in Rands:</th>
+                <th id="total">
+                  R {{ totalMoneyEarned.toFixed(2).replace(".", ",") }}
+                </th>
+              </tr>
+            </tfoot>
+          </table>
+          <div v-if="isDataFetched" class="result">{{ resultMessage }}</div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
+
 <script>
+import jsPDF from "jspdf";
 import { mapActions, mapState } from "vuex";
 import Chart from "chart.js/auto";
-import { nextTick } from 'vue';
+import { nextTick } from "vue";
 
 export default {
   data() {
     return {
       day: null,
       rate: 1,
-      resultMessage: "",
-      isDataFetched: false, // New state variable
+      isDataFetched: false,
     };
   },
   computed: {
@@ -113,7 +133,11 @@ export default {
     },
     resultMessage() {
       if (this.capacity !== null && this.energyUsed !== null) {
-        return `Energy Generated - ${this.capacity} kWh, Energy Used - ${this.energyUsed} kWh`;
+        if (this.savedUnits <= 0) {
+          return "You did not generate enough energy to receive any payment.";
+        } else {
+          return `Energy Generated: ${this.capacity.toFixed(2)} kWh, Energy Used: ${this.energyUsed.toFixed(2)} kWh. Units Sent Back: ${this.savedUnits.toFixed(2)} kWh. Amount Paid Back: R ${this.totalMoneyEarned.toFixed(2).replace(".", ",")}`;
+        }
       }
       return "";
     },
@@ -123,23 +147,20 @@ export default {
     async fetchData() {
       if (!this.day) {
         this.resultMessage = "Please select a day.";
-        this.isDataFetched = false; // Reset data fetch status
+        this.isDataFetched = false;
         return;
       }
 
       try {
         await this.$store.dispatch("fetchData", this.day);
-        // Update the rate in the Vuex store
         this.$store.commit("SET_RATE", this.rate);
-        this.resultMessage = `Data fetched: Energy Generated: ${this.capacity} kWh, Energy Used: ${this.energyUsed} kWh`;
         this.calculateReturn();
-        this.isDataFetched = true; // Set data fetch status to true
-        // Wait for the DOM update and then update the chart
+        this.isDataFetched = true;
         await nextTick();
         this.updateChart();
       } catch (error) {
         this.resultMessage = `Error fetching data: ${error.message}`;
-        this.isDataFetched = false; // Reset data fetch status on error
+        this.isDataFetched = false
       }
     },
     calculateReturn() {
@@ -170,8 +191,8 @@ export default {
             {
               label: "Energy (kWh)",
               data: [this.capacity, this.energyUsed, this.savedUnits],
-              backgroundColor: ["#FFCC00", "#FF9900", "#99CC00"],
-              borderColor: ["#FFCC00", "#FF9900", "#99CC00"],
+              backgroundColor: ["#3498db", "#2980b9", "#1abc9c"],
+              borderColor: ["#3498db", "#2980b9", "#1abc9c"],
               borderWidth: 1,
             },
           ],
@@ -189,179 +210,286 @@ export default {
         },
       });
     },
-  },
-  watch: {
-    capacity() {
-      if (this.isDataFetched) {
-        this.updateChart();
+    exportToPDF() {
+      const doc = new jsPDF();
+
+      // Title
+      doc.setFontSize(20);
+      doc.setFont("helvetica", "bold");
+      doc.text("Energy Calculator Report", 10, 20);
+
+      // Line under the title
+      doc.setDrawColor(0, 0, 0);
+      doc.setLineWidth(0.5);
+      doc.line(10, 25, 200, 25);
+
+      // Header
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Date: ${new Date().toLocaleDateString()}`, 10, 35);
+      doc.text(`Day: ${this.day || "N/A"}`, 10, 45);
+      doc.text(`Price Rate: R ${this.rate.toFixed(2)}`, 10, 55);
+
+      // Data Section
+      const dataYStart = 65;
+      const lineHeight = 10;
+
+      doc.text(
+        `Energy Generated: ${
+          this.capacity ? this.capacity.toFixed(2) : "N/A"
+        } kWh`,
+        10,
+        dataYStart
+      );
+      doc.text(
+        `Energy Used: ${
+          this.energyUsed ? this.energyUsed.toFixed(2) : "N/A"
+        } kWh`,
+        10,
+        dataYStart + lineHeight
+      );
+      doc.text(
+        `Units Sent Back: ${
+          this.savedUnits ? this.savedUnits.toFixed(2) : "N/A"
+        } kWh`,
+        10,
+        dataYStart + 2 * lineHeight
+      );
+      doc.text(
+        `Amount Paid Back: R ${
+          this.totalMoneyEarned
+            ? this.totalMoneyEarned.toFixed(2).replace(".", ",")
+            : "N/A"
+        }`,
+        10,
+        dataYStart + 3 * lineHeight
+      );
+
+      // Result Message
+      if (this.resultMessage) {
+        doc.text("Result Message:", 10, dataYStart + 4 * lineHeight);
+        doc.text(this.resultMessage, 10, dataYStart + 5 * lineHeight, { maxWidth: 180 });
       }
-    },
-    energyUsed() {
-      if (this.isDataFetched) {
-        this.updateChart();
-      }
-    },
-  },
+
+      // Footer
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "italic");
+      doc.text("Generated by Energy Calculator", 10, 290);
+      
+      // Save the PDF
+      doc.save("energy_calculator_report.pdf");
+    }
+  }
 };
-</script><style scoped>
-.home {
-  position: relative;
-  color: white;
-  overflow: hidden;
-  min-height: 100vh; 
-  display: flex;
-  flex-direction: column;
+</script>
+
+
+<style scoped>
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-img {
-  filter: blur(2px);
-  transition: filter 2s ease-in, opacity 2s ease-in;
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+}
+
+.home {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.home img {
+  filter: drop-shadow(blue);
   height: 100%;
   width: 100%;
   object-fit: cover;
+  transition: opacity 0.5s ease-in-out;
   position: absolute;
   top: 0;
   left: 0;
   z-index: -1;
 }
 
-#app {
+.fadeIn {
+  opacity: 1;
+}
+
+.energy-calculator {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1; 
-  padding: 20px;
-  box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+  margin: 40px auto;
+  z-index: 1;
+  text-align: left;
+  backdrop-filter: blur(15px);
 }
 
-.container {
-  background: radial-gradient(circle, #2a2a2a, #4d4d4d);
-  padding: 30px;
-  border-radius: 5px;
-  max-width: 500px;
-  width: 100%;
-  text-align: center;
-}
-
-h1 {
-  color: #ff9900;
-  margin-bottom: 15px;
-  font-size: 3rem;
+.energy-calculator h2 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
   font-weight: 800;
-  background: linear-gradient(135deg, #ffcc00, #ff9900);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.form-group-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
 }
 
 .form-group {
-  flex: 1;
-  min-width: 280px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
-  font-size: 14px;
   display: block;
-  margin-bottom: 10px;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 8px;
   font-weight: 600;
-  color: #ff9900;
-  text-transform: uppercase;
 }
 
 .form-group input {
   width: 100%;
-  background: #333;
-  padding: 10px;
-  outline: none;
-  border: 2px solid #444;
-  border-radius: 5px;
-  font-size: 1rem;
-  color: #eee;
-  transition: border-color 0.7s, box-shadow 0.7s;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  color: #333;
+  font-size: 16px;
+  background: #f9f9f9;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-::placeholder {
-  color: #888;
+.form-group input::placeholder {
+  color: #aaa;
 }
 
 .form-group input:focus {
-  border-color: #ffcc00;
-  box-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
+  border-color: #3498db;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
 .button-group {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 10px;
+  margin-top: 20px;
+}
+
+.pdf-button-group {
+  margin-top: 20px;
 }
 
 button {
-  background: linear-gradient(135deg, #ff9900, #ff6600);
+  background: #3498db;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border-radius: 8px;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
   transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 
 button:hover {
-  background: linear-gradient(135deg, #ff6600, #ff3300);
-  transform: translateY(-3px);
+  background: #2980b9;
+  transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-.result, #error, .success {
-  margin-top: 10px;
+.btn-export {
+  background: #f39c12;
+  color: #fff;
+}
+
+.btn-export:hover {
+  background: #e67e22;
+}
+
+.result,
+#error,
+.success {
+  margin-top: 20px;
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 600;
   text-align: center;
 }
 
 #error {
-  color: #ff9900;
+  color: #e74c3c;
 }
 
 .success {
+  color: #2ecc71;
+}
+
+.register {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table,
+th,
+td {
+  border: 1px solid #555;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  font-size: 16px;
+}
+
+th {
+  background: #444;
   color: #ffcc00;
 }
 
-#register {
-  background: radial-gradient(rgb(73, 73, 73), rgb(124, 124, 124));
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 600px;
-  margin-top: 30px;
+td {
+  background: #333;
+  color: #eee;
+}
+
+tfoot {
+  background: #444;
+  color: #ffcc00;
+  font-weight: 700;
 }
 
 @media (max-width: 768px) {
-  .form-group-container {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
+  .energy-calculator {
     padding: 20px;
-    max-width: 100%;
+    margin: 20px;
+  }
+
+  .energy-calculator h2 {
+    font-size: 2rem;
+  }
+
+  .form-group input {
+    font-size: 14px;
   }
 
   button {
-    padding: 12px 24px;
-    font-size: 16px;
+    font-size: 14px;
   }
 }
 </style>
