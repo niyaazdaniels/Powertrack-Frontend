@@ -53,82 +53,149 @@ export default {
 <style scoped>
 /* Container styling */
 .container {
-  max-width: 600px;
+  max-width: 700px;
   margin: auto;
-  padding: 20px;
-  background-color: #f0f8ff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+  border-radius: 15px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  font-family: 'Roboto', sans-serif;
+  animation: fadeIn 1s ease-out;
 }
 
 /* Header styling */
 header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 header h1 {
-  color: #333;
-  font-size: 2em;
+  color: #004d40;
+  font-size: 2.5em;
+  font-weight: 700;
   margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  animation: slideIn 1s ease-out;
 }
 
 /* Form styling */
 .calculator-form {
   display: flex;
   flex-direction: column;
+  animation: formAppear 1s ease-out;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  position: relative;
 }
 
 label {
   display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #2e8b57;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #00796b;
+  font-size: 1.1em;
 }
 
 input {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  padding: 15px;
+  border: 1px solid #b2dfdb;
+  border-radius: 8px;
   font-size: 1em;
+  background-color: #ffffff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-input::placeholder {
-  color: #aaa;
+input:focus {
+  border-color: #004d40;
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 77, 64, 0.3);
 }
 
 /* Button styling */
 .calculate-button {
-  background-color: #2e8b57;
+  background: linear-gradient(135deg, #00796b 0%, #004d40 100%);
   color: white;
-  padding: 10px;
+  padding: 12px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 1.1em;
+  font-size: 1.2em;
+  font-weight: 600;
+  transition: background 0.3s ease, transform 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.calculate-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300%;
+  height: 300%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: transform 0.5s ease;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  z-index: 0;
+}
+
+.calculate-button:hover::before {
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .calculate-button:hover {
-  background-color: #256d4a;
+  background: linear-gradient(135deg, #004d40 0%, #00796b 100%);
+  transform: translateY(-2px);
+  z-index: 1;
 }
 
 /* Results styling */
 .results {
-  margin-top: 20px;
+  margin-top: 30px;
   text-align: center;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  animation: resultsFadeIn 1s ease-out;
 }
 
 .results h2 {
-  color: #2e8b57;
+  color: #004d40;
+  margin-bottom: 15px;
+  font-size: 2em;
+  font-weight: 700;
 }
 
 .result-value {
   font-weight: bold;
-  color: #2e8b57;
+  color: #004d40;
+  font-size: 1.2em;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes formAppear {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes resultsFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
