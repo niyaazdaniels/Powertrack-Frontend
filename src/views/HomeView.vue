@@ -50,49 +50,8 @@
       </div>
 
       <div class="chart-container d-flex flex-wrap justify-content-between">
-        <!-- First Chart -->
-        <div class="chart-card col-md-12 mb-4">
-          <div class="card h-100 border-0 shadow">
-            <div class="card-body p-3 bg-dark text-white rounded">
-              <h5 class="h5 text-light text-start text-uppercase">
-                Production
-              </h5>
-              <div class="card-text">
-                <canvas id="myChart" height="325"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Second Chart -->
-        <div class="chart-card col-md-12 mb-4">
-          <div class="card h-100 border-0 shadow">
-            <div class="card-body p-3 bg-dark text-white rounded">
-              <h5 class="h5 text-light text-start text-uppercase">Cost</h5>
-              <div class="card-text">
-                <canvas id="mySecondChart" height="325"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Third Chart -->
-        <div class="chart-card col-md-4 mb-4">
-          <div class="card h-100 border-0 shadow">
-            <div class="card-body p-3 bg-dark text-white rounded">
-              <h5 class="h5 text-light text-uppercase text-start">
-                Usage Estimate
-              </h5>
-
-              <div class="card-text">
-                <canvas id="myThirdChart" height="325"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Energy Calculator -->
-        <div class="chart-card col-md-4 mb-4">
+              <!-- Energy Calculator -->
+              <div class="chart-card col-md-4 mb-4">
           <div class="card h-100 border-0 shadow">
             <div class="card-body p-3 bg-dark text-white rounded">
               <h5 class="h5 text-light text-uppercase text-start">
@@ -148,7 +107,9 @@
                     />
                   </div>
                   <div class="button-group mb-3">
-                    <button type="submit" class="btn btn-primary">Fetch Data</button>
+                    <button type="submit" class="btn btn-primary">
+                      Fetch Data
+                    </button>
                   </div>
                   <div class="pdf-button-group">
                     <button
@@ -166,45 +127,86 @@
                     </button>
                   </div>
                 </form>
+              </div>
 
-                <!-- Result -->
-                <canvas
-                  v-if="isDataFetched"
-                  id="energyChart"
-                  width="200"
-                  height="200"
-                ></canvas>
+              <!-- Result -->
 
-                <!-- Register -->
-                <div
-                  id="register"
-                  class="register"
-                  v-if="isDataFetched"
-                >
-                  <h2>Your Receipt</h2>
-                  <table>
-                    <tbody id="entries">
-                      <tr>
-                        <td>Units </td>
-                        <td>{{ savedUnits.toFixed(2) }} kWh</td>
-                      </tr>
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <th>Amount in Rands:</th>
-                        <th id="total">
-                          R {{ totalMoneyEarned.toFixed(2).replace(".", ",") }}
-                        </th>
-                      </tr>
-                    </tfoot>
-                  </table>
-                  <div v-if="isDataFetched" class="result">{{ resultMessage }}</div>
-                </div>
+              <!-- Register -->
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-card col-md-4 mb-4">
+          <canvas
+            v-if="isDataFetched"
+            id="energyChart"
+            width="200"
+            height="200"
+          ></canvas>
+        </div>
+
+        <div class="chart-card col-md-4 mb-4">
+          <div id="register" class="register" v-if="isDataFetched">
+            <h2>Your Receipt</h2>
+            <table>
+              <tbody id="entries">
+                <tr>
+                  <td>Units</td>
+                  <td>{{ savedUnits.toFixed(2) }} kWh</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Amount in Rands:</th>
+                  <th id="total">
+                    R {{ totalMoneyEarned.toFixed(2).replace(".", ",") }}
+                  </th>
+                </tr>
+              </tfoot>
+            </table>
+            <div v-if="isDataFetched" class="result">{{ resultMessage }}</div>
+          </div>
+        </div>
+        <!-- First Chart -->
+        <div class="chart-card col-md-12 mb-4">
+          <div class="card h-100 border-0 shadow">
+            <div class="card-body p-3 bg-dark text-white rounded">
+              <h5 class="h5 text-light text-start text-uppercase">
+                Production
+              </h5>
+              <div class="card-text">
+                <canvas id="myChart" height="325"></canvas>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- Second Chart -->
+        <div class="chart-card col-md-12 mb-4">
+          <div class="card h-100 border-0 shadow">
+            <div class="card-body p-3 bg-dark text-white rounded">
+              <h5 class="h5 text-light text-start text-uppercase">Cost</h5>
+              <div class="card-text">
+                <canvas id="mySecondChart" height="325"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Third Chart -->
+        <div class="chart-card col-md-4 mb-4">
+          <div class="card h-100 border-0 shadow">
+            <div class="card-body p-3 bg-dark text-white rounded">
+              <h5 class="h5 text-light text-uppercase text-start">
+                Usage Estimate
+              </h5>
+
+              <div class="card-text">
+                <canvas id="myThirdChart" height="325"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -221,7 +223,7 @@
         Companies contributing to the sustainability of our programme
       </p>
     </div>
-    <!-- <div class="our-partners-companies d-flex justify-content-center">
+    <div class="our-partners-companies d-flex justify-content-center">
       <div class="carousel-container">
         <div class="carousel-item">
           <img src="../assets/microsoft-logo.jpg" alt="Microsoft">
@@ -245,7 +247,7 @@
           <img src="../assets/mainwp-logo.png" alt="MainWP">
         </div>
       </div>
-    </div> -->
+    </div>
   </section>
 </template>
 
@@ -260,12 +262,12 @@ Chart.register(...registerables);
 export default {
   data() {
     return {
-      day: 'Day 1',
+      day: "Day 1",
       rate: 1,
       isDataFetched: false,
       isVisible: false,
       isImageLoaded: false,
-      errorMessage: '',
+      errorMessage: "",
     };
   },
   computed: {
@@ -280,7 +282,7 @@ export default {
       "dayData",
       "capacity",
       "energyUsed",
-      "totalMoneyEarned"
+      "totalMoneyEarned",
     ]),
     savedUnits() {
       return this.capacity - this.energyUsed;
@@ -306,7 +308,7 @@ export default {
   },
   methods: {
     ...mapActions(["fetchData", "calculateReturn", "fetchInverterData"]),
-    
+
     async fetchData() {
       if (!this.day) {
         this.errorMessage = "Please select a day.";
@@ -323,11 +325,13 @@ export default {
         this.updateChart();
       } catch (error) {
         console.error("Error fetching data:", error);
-        this.errorMessage = `Error fetching data: ${error.response?.data?.message || error.message}`;
+        this.errorMessage = `Error fetching data: ${
+          error.response?.data?.message || error.message
+        }`;
         this.isDataFetched = false;
       }
     },
-    
+
     async calculateReturn() {
       try {
         await this.$store.dispatch("calculateReturn");
@@ -335,7 +339,7 @@ export default {
         console.error("Error calculating return:", error);
       }
     },
-    
+
     updateChart() {
       const canvas = document.getElementById("energyChart");
       if (canvas) {
@@ -587,7 +591,6 @@ export default {
         `Capacity: ${this.capacity?.toFixed(2) || "N/A"} kWh`,
         10,
 
-
         dataYStart
       );
       doc.text(
@@ -649,7 +652,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 /* Home Section */
@@ -727,7 +729,7 @@ export default {
   left: 0;
   width: 100%;
   height: 5px;
-  background: linear-gradient(90deg, #00BCD4, #FFFFFF, #00BCD4);
+  background: linear-gradient(90deg, #00bcd4, #ffffff, #00bcd4);
   background-size: 200% 100%;
   animation: headingGlow 2s infinite;
 }
@@ -745,9 +747,12 @@ export default {
   letter-spacing: 1px;
   margin: 0;
 }
+.text-success{
+  color: green;
+}
 /* Energy Dashboard Section */
 .energy-dashboard-section {
-  background: linear-gradient(135deg, #1D1D1D, #333);
+  background: linear-gradient(135deg, #1d1d1d, #333);
   margin: 1.5rem auto;
   padding: 2rem;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
@@ -784,11 +789,11 @@ export default {
   font-weight: bold;
   margin-bottom: 1rem;
   position: relative;
-  color: #E0E0E0;
+  color: #e0e0e0;
 }
 /* Navbar Section */
 .navbar {
-  background-color: #343A40;
+  background-color: #343a40;
   border-radius: 0.5rem;
   position: relative;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
@@ -800,7 +805,7 @@ export default {
   left: -8px;
   width: calc(100% + 16px);
   height: calc(100% + 16px);
-  border: 2px solid #00BCD4;
+  border: 2px solid #00bcd4;
   border-radius: 0.5rem;
   pointer-events: none;
   opacity: 0.5;
@@ -809,18 +814,18 @@ export default {
 }
 @keyframes borderGlow {
   0% {
-    border-color: #00BCD4;
+    border-color: #00bcd4;
   }
   50% {
-    border-color: #FFFFFF;
+    border-color: #ffffff;
   }
   100% {
-    border-color: #00BCD4;
+    border-color: #00bcd4;
   }
 }
 .nav-item.active .nav-link {
   color: #fff;
-  background-color: #00BCD4;
+  background-color: #00bcd4;
   border-radius: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
@@ -831,8 +836,8 @@ export default {
   transition: color 0.3s ease, background-color 0.3s ease;
 }
 .nav-link:hover {
-  color: #00BCD4;
-  background-color: #454D55;
+  color: #00bcd4;
+  background-color: #454d55;
 }
 /* Chart Cards */
 .chart-container {
@@ -931,11 +936,11 @@ export default {
   backdrop-filter: blur(15px);
 }
 .energy-calculator h2 {
-  color: #2C3E50;
+  color: #2c3e50;
   font-size: 2.5rem;
   margin-bottom: 20px;
   font-weight: 800;
-  border-bottom: 2px solid #3498DB;
+  border-bottom: 2px solid #3498db;
   padding-bottom: 10px;
 }
 .form-group {
@@ -955,14 +960,14 @@ export default {
   border-radius: 8px;
   color: #333;
   font-size: 16px;
-  background: #F9F9F9;
+  background: #f9f9f9;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 .form-group input::placeholder {
   color: #aaa;
 }
 .form-group input:focus {
-  border-color: #3498DB;
+  border-color: #3498db;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 .button-group {
@@ -972,7 +977,7 @@ export default {
   margin-top: 20px;
 }
 button {
-  background: #3498DB;
+  background: #3498db;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -983,16 +988,16 @@ button {
   transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 button:hover {
-  background: #2980B9;
+  background: #2980b9;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 .btn-export {
-  background: #F39C12;
+  background: #f39c12;
   color: #fff;
 }
 .btn-export:hover {
-  background: #E67E22;
+  background: #e67e22;
 }
 .result,
 #error,
@@ -1003,10 +1008,10 @@ button:hover {
   text-align: center;
 }
 #error {
-  color: #E74C3C;
+  color: #e74c3c;
 }
 .success {
-  color: #2ECC71;
+  color: #2ecc71;
 }
 .register {
   background: rgba(255, 255, 255, 0.95);
@@ -1032,7 +1037,7 @@ td {
 }
 th {
   background: #444;
-  color: #FFCC00;
+  color: white;
 }
 td {
   background: #333;
@@ -1040,7 +1045,7 @@ td {
 }
 tfoot {
   background: #444;
-  color: #FFCC00;
+  color: white;
   font-weight: 700;
 }
 @media (max-width: 768px) {
@@ -1096,11 +1101,10 @@ tfoot {
 }
 
 h1 {
-  color: #FF9900;
   margin-bottom: 20px;
   font-size: 20px;
   font-weight: 600;
-  background: linear-gradient(90deg, #FFCC00, #FF9900);
+  background: linear-gradient(90deg, green 55%, darkslategrey);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -1123,7 +1127,7 @@ h1 {
   display: block;
   margin-bottom: 6px;
   font-weight: 500;
-  color: #FF9900;
+  color: #ff9900;
 }
 
 .form-group input {
@@ -1136,7 +1140,7 @@ h1 {
 }
 
 .form-group input:focus {
-  border-color: #FFCC00;
+  border-color: #ffcc00;
   outline: none;
   box-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
 }
@@ -1148,7 +1152,7 @@ h1 {
 }
 
 button {
-  background-color: #FF9900;
+  background-color: #ff9900;
   color: white;
   border: none;
   padding: 10px 16px;
@@ -1159,25 +1163,25 @@ button {
 }
 
 button:hover {
-  background-color: #FFCC00;
+  background-color: #ffcc00;
 }
 
 .result {
   margin-top: 15px;
   font-size: 16px;
   font-weight: 600;
-  color: #FFCC00;
+  color: #ffcc00;
   text-align: center;
 }
 
 #error {
-  color: #FF9900;
+  color: #ff9900;
   font-size: 16px;
   font-weight: 500;
 }
 
 .success {
-  color: #FFCC00;
+  color: #ffcc00;
   font-size: 16px;
   font-weight: 500;
 }
@@ -1188,28 +1192,29 @@ button:hover {
 }
 
 #ticket {
-  background: #FFFFFF;
+  background: #ffffff;
   color: black;
   margin: auto;
   padding: 1em;
   border-radius: 12px;
-  box-shadow: 0 0 5px rgba(0,0,0,.25);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
   width: 100%;
   max-width: 500px;
 }
 
 #ticket h1 {
   text-align: center;
-  color: #FF9900;
+  color: #ff9900;
 }
 
 #ticket table {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   width: 100%;
   border-collapse: collapse;
 }
 
-#ticket td, #ticket th {
+#ticket td,
+#ticket th {
   padding: 8px;
 }
 
@@ -1218,7 +1223,8 @@ button:hover {
   background-color: #f7f7f7;
 }
 
-#ticket td, #ticket #total {
+#ticket td,
+#ticket #total {
   text-align: left;
 }
 
