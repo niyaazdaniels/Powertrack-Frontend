@@ -33,6 +33,7 @@
             <div class="button-group">
               <button type="submit">Login</button>
             </div>
+            <div class="work">Dont have an account? <router-link to="/signup">Sign Up</router-link></div>
             <div v-if="loginError" class="error">{{ loginError }}</div>
           </form>
         </div>
@@ -187,6 +188,9 @@
     font-size: 14px;
     color: #e74c3c;
     font-weight: 600;
+  }
+  .work{
+    padding-top: 15px;
   }
   
   @media (max-width: 768px) {
