@@ -1,27 +1,27 @@
 <template>
-  <div class="app">
-    <div class="home">
+  <div class="contact-page">
+    <div class="content-wrapper">
       <img
         alt="background"
         :class="{ fadeIn: isImageLoaded }"
         src="../assets/pixelcut-export.jpeg"
         @load="startAnimation"
       />
-      <div class="help-container container">
-        <h2>Help & Support</h2>
-        <p>If you need assistance, please follow these guidelines:</p>
+      <div class="contact-container container">
+        <h2>Contact Us</h2>
+        <p>If you have any questions or require assistance, please use the following resources to reach out to us:</p>
         <ul>
           <li>
-            <strong>Step 1:</strong> Check our <a href="/faq">FAQ page</a> for common questions.
+            <strong>Step 1:</strong> Visit our <a href="/faq">FAQ page</a> for answers to common questions.
           </li>
           <li>
-            <strong>Step 2:</strong> Visit our <a href="/contact">Contact Us</a> page to get in touch with support.
+            <strong>Step 2:</strong> Use our <a href="/contact">Contact Form</a> to send us a message directly.
           </li>
           <li>
-            <strong>Step 3:</strong> Refer to the <a href="/user-guide">User Guide</a> for detailed instructions.
+            <strong>Step 3:</strong> For detailed guidance, refer to our <a href="/user-guide">User Guide</a>.
           </li>
         </ul>
-        <p>For any urgent issues, please reach out to our support team directly.</p>
+        <p>For urgent inquiries, please contact our support team directly through our <a href="mailto:support@example.com">email</a>.</p>
       </div>
     </div>
   </div>
@@ -29,7 +29,7 @@
 
 <script>
 export default {
-  name: "HelpSection",
+  name: "ContactPage",
   data() {
     return {
       isImageLoaded: false,
@@ -50,14 +50,14 @@ html, body {
   padding: 0;
 }
 
-.app {
+.contact-page {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   position: relative;
 }
 
-.home {
+.content-wrapper {
   flex: 1;
   display: grid;
   place-items: center;
@@ -67,7 +67,7 @@ html, body {
   overflow: hidden;
 }
 
-.home img {
+.content-wrapper img {
   height: 100%;
   width: 100%;
   object-fit: cover;
@@ -81,7 +81,8 @@ html, body {
 .fadeIn {
   opacity: 1;
 }
-.help-container {
+
+.contact-container {
   position: relative;
   background-color: #ffffff; 
   padding: 40px; 
@@ -97,7 +98,7 @@ html, body {
   border: 1px solid rgba(0, 0, 0, 0.1); 
 }
 
-.help-container h2 {
+.contact-container h2 {
   color: #2c3e50; 
   font-size: 3rem;
   margin-bottom: 20px;
@@ -106,7 +107,7 @@ html, body {
   padding-bottom: 10px; 
 }
 
-.help-container p {
+.contact-container p {
   color: #7f8c8d; 
   line-height: 1.8;
   font-size: 1.2rem; 
@@ -114,13 +115,13 @@ html, body {
   text-align: justify; 
 }
 
-.help-container ul {
+.contact-container ul {
   list-style: none; 
   padding: 0; 
   margin: 0; 
 }
 
-.help-container li {
+.contact-container li {
   margin-bottom: 20px; 
   font-size: 1.15rem;
   line-height: 1.7;
@@ -128,7 +129,7 @@ html, body {
   padding-left: 40px; 
 }
 
-.help-container li::before {
+.contact-container li::before {
   content: '•'; 
   color: #3498db; 
   font-size: 1.5rem;
@@ -137,38 +138,38 @@ html, body {
   top: 0;
 }
 
-.help-container strong {
+.contact-container strong {
   color: #34495e; 
   font-weight: 600; 
 }
 
-.help-container a {
+.contact-container a {
   color: #3498db; 
   text-decoration: none; 
   font-weight: 500; 
   transition: color 0.3s ease, text-decoration 0.3s ease; 
 }
 
-.help-container a:hover {
+.contact-container a:hover {
   color: #1d7dff; 
   text-decoration: underline; 
 }
 
 @media (max-width: 768px) {
-  .help-container {
+  .contact-container {
     padding: 20px;
     margin: 20px; 
   }
 
-  .help-container h2 {
+  .contact-container h2 {
     font-size: 2rem; 
   }
 
-  .help-container p {
+  .contact-container p {
     font-size: 1rem; 
   }
 
-  .help-container li {
+  .contact-container li {
     font-size: 1rem;
   }
 }

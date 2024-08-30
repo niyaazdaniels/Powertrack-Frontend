@@ -48,7 +48,7 @@
               <router-link class="nav-link" to="/calculator">Calculator</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/help">Help</router-link>
+              <router-link class="nav-link" to="/contact">Help</router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/login">Login</router-link>
