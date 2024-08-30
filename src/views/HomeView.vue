@@ -10,7 +10,7 @@
       class="text-overlay text-uppercase rounded"
       :class="{ fadeIn: isVisible }"
     >
-      <h1 class="display-3">LC STUDIO</h1>
+      <h1 class="display-3">PowerTrack</h1>
       <p class="display-6">Coding The Future</p>
     </div>
   </div>
@@ -702,9 +702,10 @@ export default {
   transition: opacity 1s ease-in-out, transform 2s ease-in-out;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
 }
+
 .text-overlay h1 {
   font-size: 5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1rem;  
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 .text-overlay p {
@@ -1098,15 +1099,6 @@ tfoot {
   .chart-card {
     flex: 1 1 100%;
   }
-}
-
-h1 {
-  margin-bottom: 20px;
-  font-size: 20px;
-  font-weight: 600;
-  background: linear-gradient(90deg, green 55%, darkslategrey);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 .form-group-container {
