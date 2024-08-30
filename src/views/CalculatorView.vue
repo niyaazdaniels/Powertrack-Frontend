@@ -163,7 +163,7 @@ body {
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
   max-width: 600px;
   width: 90%;
-  margin: 40px auto;
+  height: max-content;
   z-index: 1;
   text-align: left;
   backdrop-filter: blur(15px);
@@ -290,7 +290,7 @@ tfoot {
 }
 .chart {
   margin-top: 20px;
-  height: 400px;
+  height: max-content;
   width: 100%;
 }
 
