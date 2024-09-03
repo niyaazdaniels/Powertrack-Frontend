@@ -1,110 +1,37 @@
 <template>
   <div class="app">
     <div class="home">
-      <img
-        alt="background"
-        :class="{ fadeIn: isImageLoaded }"
-        src="../assets/calculator-background-transformed.jpeg"
-        @load="startAnimation"
-      />
-      <div class="energy-calculator container">
-        <h2>Energy Calculator</h2>
-        <form @submit.prevent="fetchData">
+      <img src="../assets/AdobeStock_519445978-scaled.jpeg.webp" alt="Background Image" class="fadeIn" />
+      <div class="energy-calculator">
+        <header>
+          <h2>Solar Energy Calculator</h2>
+        </header>
+        <form @submit.prevent="calculate">
           <div class="form-group">
-            <label for="day">Select Day:</label>
-            <input
-              type="number"
-              id="day"
-              v-model.number="day"
-              required
-              placeholder="Select a day"
-            />
+            <label for="priceRate">Price Rate (ZAR/kWh):</label>
+            <input v-model.number="priceRate" type="number" step="0.01" id="priceRate" placeholder="Enter rate" required>
           </div>
           <div class="form-group">
-            <label for="rate">Price Rate (R per kWh):</label>
-            <input
-              type="number"
-              id="rate"
-              v-model.number="rate"
-              step="0.01"
-              placeholder="Enter price rate"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="capacity">Energy Generated (kWh):</label>
-            <input
-              type="number"
-              id="capacity"
-              v-model.number="capacity"
-              step="0.01"
-              placeholder="Energy generated"
-              readonly
-            />
+            <label for="energyGenerated">Energy Generated (kWh):</label>
+            <input v-model.number="energyGenerated" type="number" step="0.01" id="energyGenerated" placeholder="Enter generated energy" required>
           </div>
           <div class="form-group">
             <label for="energyUsed">Energy Used (kWh):</label>
-            <input
-              type="number"
-              id="energyUsed"
-              v-model.number="energyUsed"
-              step="0.01"
-              placeholder="Energy used"
-              readonly
-            />
+            <input v-model.number="energyUsed" type="number" step="0.01" id="energyUsed" placeholder="Enter used energy" required>
           </div>
           <div class="button-group">
-            <button type="submit">Fetch Data</button>
-          </div>
-          <div class="pdf-button-group">
-            <button
-              @click="exportToPDF"
-              v-if="
-                isDataFetched &&
-                capacity !== null &&
-                energyUsed !== null &&
-                savedUnits !== null &&
-                totalMoneyEarned !== null
-              "
-              class="btn btn-export"
-            >
-              Export as PDF
-            </button>
+            <button type="submit" class="calculate-button">Calculate</button>
           </div>
         </form>
+        
+        <div v-if="savedEnergy !== null" class="result">
+          <p>Energy Saved: <span>{{ savedEnergy.toFixed(2) }} kWh</span></p>
+          <p>Amount Paid Back: <span>ZAR {{ amountPaidBack.toFixed(2) }}</span></p>
+        </div>
 
-        <!-- Result -->
-        <canvas
-          v-if="isDataFetched"
-          id="energyChart"
-          width="200"
-          height="200"
-        ></canvas>
-
-        <!-- Register -->
-        <div
-          id="register"
-          class="register"
-          v-if="isDataFetched"
-        >
-          <h2>Your Receipt</h2>
-          <table>
-            <tbody id="entries">
-              <tr>
-                <td>Units </td>
-                <td>{{ savedUnits.toFixed(2) }} kWh</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <th>Amount in Rands:</th>
-                <th id="total">
-                  R {{ totalMoneyEarned.toFixed(2).replace(".", ",") }}
-                </th>
-              </tr>
-            </tfoot>
-          </table>
-          <div v-if="isDataFetched" class="result">{{ resultMessage }}</div>
+        <!-- Chart component -->
+        <div v-if="savedEnergy !== null" class="chart">
+          <BarChart :data="chartData" />
         </div>
       </div>
     </div>
@@ -113,174 +40,77 @@
 
 
 <script>
-import jsPDF from "jspdf";
-import { mapActions, mapState } from "vuex";
-import Chart from "chart.js/auto";
-import { nextTick } from "vue";
+import { defineComponent, ref, reactive } from 'vue';
+import { Bar } from 'vue-chartjs';
+import { Chart as ChartJS, BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale } from 'chart.js';
 
-export default {
-  data() {
-    return {
-      day: null,
-      rate: 1,
-      isDataFetched: false,
+ChartJS.register(BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale);
+
+export default defineComponent({
+  components: {
+    BarChart: Bar
+  },
+  setup() {
+    const priceRate = ref(0);
+    const energyGenerated = ref(0);
+    const energyUsed = ref(0);
+    const savedEnergy = ref(null);
+    const amountPaidBack = ref(null);
+
+    const chartData = reactive({
+      labels: ['Current'], // Example static label
+      datasets: [
+        {
+          label: 'Energy Generated (kWh)',
+          data: [],
+          backgroundColor: '#2ecc71',
+          borderColor: '#27ae60',
+          borderWidth: 1,
+        },
+        {
+          label: 'Energy Used (kWh)',
+          data: [],
+          backgroundColor: '#e67e22',
+          borderColor: '#d35400',
+          borderWidth: 1,
+        },
+        {
+          label: 'Energy Saved (kWh)',
+          data: [],
+          backgroundColor: '#3498db',
+          borderColor: '#2980b9',
+          borderWidth: 1,
+        },
+      ]
+    });
+
+    const calculate = () => {
+      const generated = energyGenerated.value;
+      const used = energyUsed.value;
+      const saved = generated - used;
+      const amountPaidBackValue = Math.max(0, saved) * priceRate.value;
+
+      savedEnergy.value = Math.max(0, saved);
+      amountPaidBack.value = amountPaidBackValue;
+
+      // Update chartData
+      chartData.labels = ['Current'];
+      chartData.datasets[0].data = [generated];
+      chartData.datasets[1].data = [used];
+      chartData.datasets[2].data = [savedEnergy.value];
     };
-  },
-  computed: {
-    ...mapState(["capacity", "energyUsed", "totalMoneyEarned"]),
-    savedUnits() {
-      return this.capacity - this.energyUsed;
-    },
-    resultMessage() {
-      if (this.capacity !== null && this.energyUsed !== null) {
-        if (this.savedUnits <= 0) {
-          return "You did not generate enough energy to receive any payment.";
-        } else {
-          return `Energy Generated: ${this.capacity.toFixed(2)} kWh, Energy Used: ${this.energyUsed.toFixed(2)} kWh. Units Sent Back: ${this.savedUnits.toFixed(2)} kWh. Amount Paid Back: R ${this.totalMoneyEarned.toFixed(2).replace(".", ",")}`;
-        }
-      }
-      return "";
-    },
-  },
-  methods: {
-    ...mapActions(["fetchData", "calculateReturn"]),
-    async fetchData() {
-      if (!this.day) {
-        this.resultMessage = "Please select a day.";
-        this.isDataFetched = false;
-        return;
-      }
 
-      try {
-        await this.$store.dispatch("fetchData", this.day);
-        this.$store.commit("SET_RATE", this.rate);
-        this.calculateReturn();
-        this.isDataFetched = true;
-        await nextTick();
-        this.updateChart();
-      } catch (error) {
-        this.resultMessage = `Error fetching data: ${error.message}`;
-        this.isDataFetched = false
-      }
-    },
-    calculateReturn() {
-      this.$store.dispatch("calculateReturn");
-    },
-    updateChart() {
-      const canvas = document.getElementById("energyChart");
-      if (!canvas) {
-        console.error("Canvas element not found.");
-        return;
-      }
-
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        console.error("Unable to get canvas context.");
-        return;
-      }
-
-      if (this.chart) {
-        this.chart.destroy();
-      }
-
-      this.chart = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: ["Energy Generated", "Energy Used", "Excess Energy"],
-          datasets: [
-            {
-              label: "Energy (kWh)",
-              data: [this.capacity, this.energyUsed, this.savedUnits],
-              backgroundColor: ["#3498db", "#2980b9", "#1abc9c"],
-              borderColor: ["#3498db", "#2980b9", "#1abc9c"],
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          scales: {
-            x: {
-              beginAtZero: true,
-            },
-            y: {
-              beginAtZero: true,
-            },
-          },
-        },
-      });
-    },
-    exportToPDF() {
-      const doc = new jsPDF();
-
-      // Title
-      doc.setFontSize(20);
-      doc.setFont("helvetica", "bold");
-      doc.text("Energy Calculator Report", 10, 20);
-
-      // Line under the title
-      doc.setDrawColor(0, 0, 0);
-      doc.setLineWidth(0.5);
-      doc.line(10, 25, 200, 25);
-
-      // Header
-      doc.setFontSize(12);
-      doc.setFont("helvetica", "normal");
-      doc.text(`Date: ${new Date().toLocaleDateString()}`, 10, 35);
-      doc.text(`Day: ${this.day || "N/A"}`, 10, 45);
-      doc.text(`Price Rate: R ${this.rate.toFixed(2)}`, 10, 55);
-
-      // Data Section
-      const dataYStart = 65;
-      const lineHeight = 10;
-
-      doc.text(
-        `Energy Generated: ${
-          this.capacity ? this.capacity.toFixed(2) : "N/A"
-        } kWh`,
-        10,
-        dataYStart
-      );
-      doc.text(
-        `Energy Used: ${
-          this.energyUsed ? this.energyUsed.toFixed(2) : "N/A"
-        } kWh`,
-        10,
-        dataYStart + lineHeight
-      );
-      doc.text(
-        `Units Sent Back: ${
-          this.savedUnits ? this.savedUnits.toFixed(2) : "N/A"
-        } kWh`,
-        10,
-        dataYStart + 2 * lineHeight
-      );
-      doc.text(
-        `Amount Paid Back: R ${
-          this.totalMoneyEarned
-            ? this.totalMoneyEarned.toFixed(2).replace(".", ",")
-            : "N/A"
-        }`,
-        10,
-        dataYStart + 3 * lineHeight
-      );
-
-      // Result Message
-      if (this.resultMessage) {
-        doc.text("Result Message:", 10, dataYStart + 4 * lineHeight);
-        doc.text(this.resultMessage, 10, dataYStart + 5 * lineHeight, { maxWidth: 180 });
-      }
-
-      // Footer
-      doc.setFontSize(8);
-      doc.setFont("helvetica", "italic");
-      doc.text("Generated by Energy Calculator", 10, 290);
-      
-      // Save the PDF
-      doc.save("energy_calculator_report.pdf");
-    }
+    return {
+      priceRate,
+      energyGenerated,
+      energyUsed,
+      savedEnergy,
+      amountPaidBack,
+      chartData,
+      calculate
+    };
   }
-};
+});
 </script>
 
 
@@ -333,7 +163,7 @@ body {
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
   max-width: 600px;
   width: 90%;
-  margin: 40px auto;
+  height: max-content;
   z-index: 1;
   text-align: left;
   backdrop-filter: blur(15px);
@@ -384,10 +214,6 @@ body {
   margin-top: 20px;
 }
 
-.pdf-button-group {
-  margin-top: 20px;
-}
-
 button {
   background: #3498db;
   color: white;
@@ -406,18 +232,7 @@ button:hover {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-.btn-export {
-  background: #f39c12;
-  color: #fff;
-}
-
-.btn-export:hover {
-  background: #e67e22;
-}
-
-.result,
-#error,
-.success {
+.result {
   margin-top: 20px;
   font-size: 18px;
   font-weight: 600;
@@ -473,6 +288,11 @@ tfoot {
   color: #ffcc00;
   font-weight: 700;
 }
+.chart {
+  margin-top: 20px;
+  height: max-content;
+  width: 100%;
+}
 
 @media (max-width: 768px) {
   .energy-calculator {
@@ -493,3 +313,4 @@ tfoot {
   }
 }
 </style>
+
