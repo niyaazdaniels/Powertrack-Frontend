@@ -3,7 +3,7 @@
     class="navbar navbar-dark navbar-expand-lg bg-black fixed-top position-relative"
   >
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">
+      <a class="navbar-brand" href="/">
         <img
           src="../assets/logo-e1694516836643.png"
           alt="logo"
