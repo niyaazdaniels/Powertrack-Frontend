@@ -10,7 +10,7 @@
           class="img px-2"
           height="30px"
         />
-        LC Studio
+        PowerTrack
       </a>
       <button
         class="navbar-toggler"
