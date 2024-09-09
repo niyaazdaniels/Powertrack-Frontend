@@ -3,6 +3,7 @@ import axios from 'axios';
 
 export default createStore({
   state: {
+    // Existing state properties
     monthlyProduction: 0,
     monthlyConsumption: 0,
     unit: 0,
@@ -16,8 +17,14 @@ export default createStore({
     energyUsed: 0,
     savedUnits: 0,
     totalMoneyEarned: 0,
+    
+    // Authentication state
+    token: null,
+    user: null,
   },
+  
   mutations: {
+    // Existing mutations
     SET_MONTHLY_PRODUCTION(state, value) {
       state.monthlyProduction = value;
     },
@@ -53,15 +60,25 @@ export default createStore({
     SET_TOTAL_MONEY_EARNED(state, totalMoneyEarned) {
       state.totalMoneyEarned = totalMoneyEarned;
     },
+    
+    // Authentication mutations
+    setToken(state, token) {
+      state.token = token;
+    },
+    setUser(state, user) {
+      state.user = user;
+    },
   },
+  
   actions: {
+    // Existing actions
     async fetchData({ commit, state }, selectedDay) {
       try {
         const response = await axios.get('https://backend-powertrack.onrender.com/daily');
         const dailyData = response.data;
         const formattedDay = `Day ${selectedDay}`;
         const dayData = dailyData.find(d => d.day === formattedDay);
-        
+
         if (dayData) {
           const capacity = parseFloat(dayData.production.replace(' kWh', ''));
           const energyUsed = parseFloat(dayData.consumption.replace(' kWh', ''));
@@ -95,6 +112,7 @@ export default createStore({
         throw error;
       }
     },
+    
     async fetchInverterData({ commit }) {
       try {
         const response = await axios.get('https://backend-powertrack.onrender.com/inverter');
@@ -108,10 +126,49 @@ export default createStore({
         console.error('Error fetching inverter data:', error);
       }
     },
+    
     calculateReturn({ commit, state }) {
       const savedUnits = state.capacity - state.energyUsed;
       const totalMoneyEarned = savedUnits * state.rate;
       commit('SET_TOTAL_MONEY_EARNED', totalMoneyEarned);
-    }
-  }
+    },
+
+    // Authentication actions
+    async login({ commit }, payload) {
+      try {
+        const { appId, appSecret, countryCode, email, mobile, orgId, password, username } = payload;
+
+        const data = {
+          appSecret,
+          countryCode,
+          email,
+          mobile,
+          orgId,
+          password,
+          username,
+        };
+
+        const response = await axios.post('https://globalapi.solarmanpv.com/account/v1.0/token', data, {
+          params: { appId },
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        const token = response.data.token; 
+        commit('setToken', token);
+        commit('setUser', payload); 
+        return response;
+      } catch (error) {
+        console.error('Login error:', error);
+        throw error;
+      }
+    },
+  },
+  
+  getters: {
+    // Existing getters (if any)
+    
+    // Authentication getters
+    token: (state) => state.token,
+    user: (state) => state.user,
+  },
 });
