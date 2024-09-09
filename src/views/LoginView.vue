@@ -40,7 +40,8 @@
       </div>
     </div>
   </template>
-  
+
+<!-- script -->
   <script>
   export default {
     data() {
@@ -66,6 +67,7 @@
   };
   </script>
   
+  <!-- style -->
   <style scoped>
   html, body {
     height: 100%;
