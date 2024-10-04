@@ -3,14 +3,15 @@
     class="navbar navbar-dark navbar-expand-lg bg-black fixed-top position-relative"
   >
     <div class="container-fluid">
-      <a class="navbar-brand" href="#"
-        ><img
+      <a class="navbar-brand" href="/">
+        <img
           src="../assets/logo-e1694516836643.png"
           alt="logo"
           class="img px-2"
           height="30px"
-        />LC Studio</a
-      >
+        />
+        PowerTrack
+      </a>
       <button
         class="navbar-toggler"
         type="button"
@@ -38,22 +39,22 @@
         <div class="offcanvas-body">
           <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
+              <router-link class="nav-link" to="/" exact>Home</router-link>
+            </li>
+            <li v-if="isHome" class="nav-item">
+              <a class="nav-link" href="#dashboard">Energy Data</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/dashboard">Energy Data</a>
+              <router-link class="nav-link" to="/calculator">Calculator</router-link>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Reports</a>
+              <router-link class="nav-link" to="/contact">Help</router-link>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Help</a>
+              <router-link class="nav-link" to="/login">Login</router-link>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Signup</a>
+              <router-link class="nav-link" to="/signup">Signup</router-link>
             </li>
           </ul>
         </div>
@@ -63,7 +64,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+  computed: {
+    isHome() {
+      return this.$route.path === '/';
+    }
+  }
+};
 </script>
 
 <style scoped>
